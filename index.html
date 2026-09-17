@@ -371,7 +371,7 @@
                     <option>EE</option>
                     <option>ME</option>
                     <option>CE</option>
-                   <option>none</option>
+                    <option>other</option>
 
                 </select>
 
@@ -515,7 +515,7 @@
                     <option>EE</option>
                     <option>ME</option>
                     <option>CE</option>
-                   <option>none</option>
+                   
 
                 </select>
 
@@ -531,8 +531,9 @@
                     <option>B</option>
                     <option>C</option>
                     <option>D</option>
-                   
-                  <option>none</option>
+                  
+
+
                 </select>
 
 
@@ -788,186 +789,112 @@
             <input type="hidden"
                 id="editingStudentId">
 
-
             <div class="form-grid">
 
                 <div class="input-group full">
-
-                    <label>
-                        Student Name *
-                    </label>
-
-                    <input
-                        id="studentName"
-                        type="text"
-                        placeholder="Enter full name"
-                        required>
-
+                    <label>Student Name</label>
+                    <input id="studentName" type="text" placeholder="Enter full name">
                 </div>
 
-
                 <div class="input-group">
-
-                    <label>
-                        Roll Number *
-                    </label>
-
-                    <input
-                        id="rollNo"
-                        type="text"
-                        placeholder="e.g. 23"
-                        required>
-
+                    <label>Roll Number</label>
+                    <input id="rollNo" type="text" placeholder="e.g. 23">
                 </div>
 
-
                 <div class="input-group">
-
-                    <label>
-                        Mobile Number
-                    </label>
-
-                    <input
-                        id="mobileNo"
-                        type="tel"
-                        maxlength="10"
-                        pattern="[0-9]{10}"
-                        placeholder="10 digit number">
-
+                    <label>Mobile Number</label>
+                    <input id="mobileNo" type="tel" maxlength="10" placeholder="10 digit number">
                 </div>
 
-
                 <div class="input-group">
-
-                    <label>
-                        Branch *
-                    </label>
-
-                    <select id="branch" required>
-
-                        <option value="">
-                            Select Branch
-                        </option>
-
+                    <label>Branch</label>
+                    <select id="branch">
+                        <option value="">Select Branch</option>
+                        <option value="None">None</option>
                         <option>CSE</option>
                         <option>AI & ML</option>
                         <option>ECE</option>
                         <option>EE</option>
                         <option>ME</option>
                         <option>CE</option>
-
+                        <option>biotech</option>
+                        <option>Other</option>
                     </select>
-
                 </div>
 
-
                 <div class="input-group">
-
-                    <label>
-                        Section
-                    </label>
-
+                    <label>Section</label>
                     <select id="section">
-
-                        <option value="">
-                            Select Section
-                        </option>
-
+                        <option value="">Select Section</option>
+                        <option value="None">None</option>
                         <option>A</option>
                         <option>B</option>
                         <option>C</option>
                         <option>D</option>
-
+                        <option>e</option>
+                        <option>none</option>
                     </select>
-
                 </div>
 
-
                 <div class="input-group">
-
-                    <label>
-                        Department *
-                    </label>
-
-                    <input
-                        id="department"
-                        type="text"
-                        placeholder="Computer Science"
-                        required>
-
+                    <label>Department</label>
+                    <select id="department">
+                        <option value="">Select Department</option>
+                        <option>Computer Science</option>
+                        <option>Electronics</option>
+                        <option>Mechanical</option>
+                        <option>Civil</option>
+                        <option>Electrical</option>
+                        <option>Other</option>
+                    </select>
                 </div>
 
-
                 <div class="input-group">
-
-                    <label>
-                        Course *
-                    </label>
-
-                    <input
-                        id="course"
-                        type="text"
-                        placeholder="B.Tech"
-                        required>
-
+                    <label>Course</label>
+                    <select id="course">
+                        <option value="">Select Course</option>
+                        <option>B.Tech</option>
+                        <option>mba</option>
+                        <option>MCA</option>
+                        <option>Diploma</option>
+                        <option>bba</option>
+                        <option>bca</option>
+                        <option>poly</option>
+                    </select>
                 </div>
 
-
                 <div class="input-group">
-
-                    <label>
-                        Year *
-                    </label>
-
-                    <select id="year" required>
-
-                        <option value="">
-                            Select Year
-                        </option>
-
+                    <label>Year</label>
+                    <select id="year">
+                        <option value="">Select Year</option>
+                        
                         <option>1st Year</option>
                         <option>2nd Year</option>
                         <option>3rd Year</option>
                         <option>4th Year</option>
-
                     </select>
-
                 </div>
 
-
                 <div class="input-group">
-
-                    <label>
-                        Date of Joining *
-                    </label>
-
-                    <input
-                        id="joiningDate"
-                        type="date"
-                        required>
-
+                    <label>Date of Joining</label>
+                    <input id="joiningDate" type="date">
                 </div>
 
             </div>
-
 
             <div class="form-actions">
 
                 <button type="button"
                     class="secondary-btn"
                     onclick="closeStudentModal()">
-
                     Cancel
-
                 </button>
 
                 <button
                     type="submit"
                     class="primary-btn"
                     id="studentSubmitBtn">
-
                     Add Student
-
                 </button>
 
             </div>
@@ -1002,4 +929,3 @@
 
 </body>
 </html>
-```
