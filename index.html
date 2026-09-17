@@ -1,0 +1,982 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Social & Green Club</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="logo">🌿</div>
+
+            <div>
+                <h2>Social & Green</h2>
+                <span>Club Management</span>
+            </div>
+
+        </div>
+
+        <nav>
+
+            <button class="nav-item active"
+                onclick="showSection('dashboard',this)">
+                <span>⌂</span>
+                Dashboard
+            </button>
+
+            <button class="nav-item"
+                onclick="showSection('students',this)">
+                <span>👥</span>
+                Students
+            </button>
+
+            <button class="nav-item"
+                onclick="showSection('attendance',this)">
+                <span>✓</span>
+                Attendance
+            </button>
+
+            <button class="nav-item"
+                onclick="showSection('reports',this)">
+                <span>▣</span>
+                Reports
+            </button>
+
+        </nav>
+
+        <div class="club-card">
+
+            <span>🌱</span>
+
+            <strong>Social & Green Club</strong>
+
+            <small>
+                Building a better campus
+            </small>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div>
+
+                <div class="mobile-brand">
+                    🌿 Social & Green Club
+                </div>
+
+                <p class="welcome">
+                    Club Management
+                </p>
+
+                <h1 id="pageTitle">
+                    Dashboard
+                </h1>
+
+            </div>
+
+            <div class="date-box">
+
+                <span>📅</span>
+
+                <div>
+
+                    <small>
+                        Today
+                    </small>
+
+                    <strong id="currentDate"></strong>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <section id="dashboard"
+            class="section active-section">
+
+            <div class="hero">
+
+                <div>
+
+                    <span class="hero-tag">
+                        🌱 SOCIAL & GREEN CLUB
+                    </span>
+
+                    <h2>
+                        Manage your club
+                        <br>
+                        <span>smarter.</span>
+                    </h2>
+
+                    <p>
+                        Manage members, attendance and club
+                        records from one simple dashboard.
+                    </p>
+
+                </div>
+
+                <div class="hero-leaf">
+                    🌿
+                </div>
+
+            </div>
+
+
+            <!-- STATS -->
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon students-icon">
+                        👥
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Students
+                        </span>
+
+                        <strong id="totalStudents">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon present-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Present Today
+                        </span>
+
+                        <strong id="presentToday">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon absent-icon">
+                        ×
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Absent Today
+                        </span>
+
+                        <strong id="absentToday">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon pending-icon">
+                        !
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Not Marked
+                        </span>
+
+                        <strong id="notMarked">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="small-label">
+                        QUICK ACCESS
+                    </span>
+
+                    <h2>
+                        Today's attendance
+                    </h2>
+
+                </div>
+
+                <button class="primary-btn"
+                    onclick="showSection('attendance')">
+
+                    Take Attendance →
+
+                </button>
+
+            </div>
+
+
+            <div class="empty-dashboard"
+                id="dashboardStudents">
+
+                <div class="empty-icon">
+                    👥
+                </div>
+
+                <h3>
+                    No students added yet
+                </h3>
+
+                <p>
+                    Add your first student to start managing
+                    club attendance.
+                </p>
+
+                <button class="primary-btn"
+                    onclick="openStudentModal()">
+
+                    + Add Student
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= STUDENTS ================= -->
+
+        <section id="students"
+            class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="small-label">
+                        MEMBERS
+                    </span>
+
+                    <h2>
+                        Student Directory
+                    </h2>
+
+                </div>
+
+                <button class="primary-btn"
+                    onclick="openStudentModal()">
+
+                    + Add Student
+
+                </button>
+
+            </div>
+
+
+            <div class="toolbar">
+
+                <div class="search-box">
+
+                    🔍
+
+                    <input
+                        id="searchInput"
+                        type="text"
+                        placeholder="Search name or roll number..."
+                        oninput="renderStudents()">
+
+                </div>
+
+
+                <select id="branchFilter"
+                    onchange="renderStudents()">
+
+                    <option value="">
+                        All Branches
+                    </option>
+
+                    <option>CSE</option>
+                    <option>AI & ML</option>
+                    <option>ECE</option>
+                    <option>EE</option>
+                    <option>ME</option>
+                    <option>CE</option>
+
+                </select>
+
+
+                <select id="yearFilter"
+                    onchange="renderStudents()">
+
+                    <option value="">
+                        All Years
+                    </option>
+
+                    <option>1st Year</option>
+                    <option>2nd Year</option>
+                    <option>3rd Year</option>
+                    <option>4th Year</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="student-count">
+
+                <span id="studentCount">
+                    0 students
+                </span>
+
+                <span class="limit">
+
+                    <span id="limitCount">
+                        0
+                    </span>/100 members
+
+                </span>
+
+            </div>
+
+
+            <div id="studentList"
+                class="student-grid">
+            </div>
+
+        </section>
+
+
+        <!-- ================= ATTENDANCE ================= -->
+
+        <section id="attendance"
+            class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="small-label">
+                        DAILY RECORD
+                    </span>
+
+                    <h2>
+                        Attendance
+                    </h2>
+
+                </div>
+
+                <button class="secondary-btn"
+                    onclick="downloadAttendance()">
+
+                    ↓ Download
+
+                </button>
+
+            </div>
+
+
+            <!-- DATE -->
+
+            <div class="attendance-control-card">
+
+                <div class="date-selector">
+
+                    <label>
+                        Attendance Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="attendanceDateInput"
+                        onchange="changeAttendanceDate()">
+
+                </div>
+
+
+                <div class="attendance-actions">
+
+                    <button class="present-all"
+                        onclick="markAll('present')">
+
+                        ✓ Mark All Present
+
+                    </button>
+
+                    <button class="absent-all"
+                        onclick="markAll('absent')">
+
+                        × Mark All Absent
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- FILTERS -->
+
+            <div class="advanced-filters">
+
+                <div class="search-box">
+
+                    🔍
+
+                    <input
+                        id="attendanceSearch"
+                        type="text"
+                        placeholder="Search student..."
+                        oninput="renderAttendance()">
+
+                </div>
+
+
+                <select id="attendanceBranch"
+                    onchange="renderAttendance()">
+
+                    <option value="">
+                        Branch
+                    </option>
+
+                    <option>CSE</option>
+                    <option>AI & ML</option>
+                    <option>ECE</option>
+                    <option>EE</option>
+                    <option>ME</option>
+                    <option>CE</option>
+
+                </select>
+
+
+                <select id="attendanceSection"
+                    onchange="renderAttendance()">
+
+                    <option value="">
+                        Section
+                    </option>
+
+                    <option>A</option>
+                    <option>B</option>
+                    <option>C</option>
+                    <option>D</option>
+
+                </select>
+
+
+                <select id="attendanceDepartment"
+                    onchange="renderAttendance()">
+
+                    <option value="">
+                        Department
+                    </option>
+
+                    <option>Computer Science</option>
+                    <option>Electronics</option>
+                    <option>Mechanical</option>
+                    <option>Civil</option>
+                    <option>Electrical</option>
+
+                </select>
+
+
+                <select id="attendanceCourse"
+                    onchange="renderAttendance()">
+
+                    <option value="">
+                        Course
+                    </option>
+
+                    <option>B.Tech</option>
+                    <option>BCA</option>
+                    <option>MCA</option>
+                    <option>Diploma</option>
+
+                </select>
+
+
+                <select id="attendanceYear"
+                    onchange="renderAttendance()">
+
+                    <option value="">
+                        Year
+                    </option>
+
+                    <option>1st Year</option>
+                    <option>2nd Year</option>
+                    <option>3rd Year</option>
+                    <option>4th Year</option>
+
+                </select>
+
+
+                <select id="attendanceStatus"
+                    onchange="renderAttendance()">
+
+                    <option value="">
+                        All Status
+                    </option>
+
+                    <option value="present">
+                        Present
+                    </option>
+
+                    <option value="absent">
+                        Absent
+                    </option>
+
+                    <option value="not-marked">
+                        Not Marked
+                    </option>
+
+                </select>
+
+
+                <button class="reset-btn"
+                    onclick="resetAttendanceFilters()">
+
+                    Reset
+
+                </button>
+
+            </div>
+
+
+            <!-- ATTENDANCE SUMMARY -->
+
+            <div class="attendance-summary">
+
+                <div>
+                    <span>Students</span>
+                    <strong id="attendanceTotal">0</strong>
+                </div>
+
+                <div>
+                    <span>Present</span>
+                    <strong id="attendancePresent">0</strong>
+                </div>
+
+                <div>
+                    <span>Absent</span>
+                    <strong id="attendanceAbsent">0</strong>
+                </div>
+
+                <div>
+                    <span>Not Marked</span>
+                    <strong id="attendancePending">0</strong>
+                </div>
+
+            </div>
+
+
+            <div id="attendanceList"
+                class="attendance-list">
+            </div>
+
+        </section>
+
+
+        <!-- ================= REPORTS ================= -->
+
+        <section id="reports"
+            class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="small-label">
+                        ANALYTICS
+                    </span>
+
+                    <h2>
+                        Attendance Reports
+                    </h2>
+
+                </div>
+
+                <button class="primary-btn"
+                    onclick="downloadAttendance()">
+
+                    ↓ Export CSV
+
+                </button>
+
+            </div>
+
+
+            <div class="report-card">
+
+                <div class="report-top">
+
+                    <div>
+                        <span>
+                            Total Members
+                        </span>
+
+                        <strong id="reportTotal">
+                            0
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>
+                            Total Present
+                        </span>
+
+                        <strong id="reportPresent">
+                            0
+                        </strong>
+                    </div>
+
+
+                    <div>
+                        <span>
+                            Total Absent
+                        </span>
+
+                        <strong id="reportAbsent">
+                            0
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <div id="reportList"></div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ================= MOBILE NAV ================= -->
+
+<div class="mobile-nav">
+
+    <button onclick="showSection('dashboard',this)">
+        <span>⌂</span>
+        Home
+    </button>
+
+    <button onclick="showSection('students',this)">
+        <span>👥</span>
+        Students
+    </button>
+
+    <button onclick="showSection('attendance',this)">
+        <span>✓</span>
+        Attendance
+    </button>
+
+    <button onclick="showSection('reports',this)">
+        <span>▣</span>
+        Reports
+    </button>
+
+</div>
+
+
+<!-- ================= ADD / EDIT STUDENT ================= -->
+
+<div class="modal-overlay"
+    id="studentModal">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+
+                <span class="small-label">
+                    CLUB MEMBER
+                </span>
+
+                <h2 id="studentModalTitle">
+                    Add Student
+                </h2>
+
+            </div>
+
+            <button class="close-btn"
+                onclick="closeStudentModal()">
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="studentForm">
+
+            <input type="hidden"
+                id="editingStudentId">
+
+
+            <div class="form-grid">
+
+                <div class="input-group full">
+
+                    <label>
+                        Student Name *
+                    </label>
+
+                    <input
+                        id="studentName"
+                        type="text"
+                        placeholder="Enter full name"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Roll Number *
+                    </label>
+
+                    <input
+                        id="rollNo"
+                        type="text"
+                        placeholder="e.g. 23"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Mobile Number
+                    </label>
+
+                    <input
+                        id="mobileNo"
+                        type="tel"
+                        maxlength="10"
+                        pattern="[0-9]{10}"
+                        placeholder="10 digit number">
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Branch *
+                    </label>
+
+                    <select id="branch" required>
+
+                        <option value="">
+                            Select Branch
+                        </option>
+
+                        <option>CSE</option>
+                        <option>AI & ML</option>
+                        <option>ECE</option>
+                        <option>EE</option>
+                        <option>ME</option>
+                        <option>CE</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Section
+                    </label>
+
+                    <select id="section">
+
+                        <option value="">
+                            Select Section
+                        </option>
+
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Department *
+                    </label>
+
+                    <input
+                        id="department"
+                        type="text"
+                        placeholder="Computer Science"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Course *
+                    </label>
+
+                    <input
+                        id="course"
+                        type="text"
+                        placeholder="B.Tech"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Year *
+                    </label>
+
+                    <select id="year" required>
+
+                        <option value="">
+                            Select Year
+                        </option>
+
+                        <option>1st Year</option>
+                        <option>2nd Year</option>
+                        <option>3rd Year</option>
+                        <option>4th Year</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label>
+                        Date of Joining *
+                    </label>
+
+                    <input
+                        id="joiningDate"
+                        type="date"
+                        required>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button type="button"
+                    class="secondary-btn"
+                    onclick="closeStudentModal()">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                    id="studentSubmitBtn">
+
+                    Add Student
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= PROFILE ================= -->
+
+<div class="modal-overlay"
+    id="profileModal">
+
+    <div class="modal profile-modal">
+
+        <button class="close-btn profile-close"
+            onclick="closeProfile()">
+            ×
+        </button>
+
+        <div id="profileContent"></div>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
+```
