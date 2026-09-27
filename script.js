@@ -16,15 +16,15 @@ const SUPABASE_KEY =
     "sb_publishable_2R1qWvsM0ZV58svpkX1O-g_vDFBu9oq";
 
 
-/* Make sure Supabase library exists */
 if (!window.supabase) {
+
     alert(
         "Supabase library is not loaded. Check your index.html."
     );
+
 }
 
 
-/* Create Supabase client */
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
@@ -53,13 +53,10 @@ document.addEventListener(
 
         updateCurrentDate();
 
-
-        /* Attendance date */
         const attendanceDateInput =
             document.getElementById(
                 "attendanceDateInput"
             );
-
 
         if (attendanceDateInput) {
 
@@ -69,12 +66,10 @@ document.addEventListener(
         }
 
 
-        /* Student form */
         const studentForm =
             document.getElementById(
                 "studentForm"
             );
-
 
         if (studentForm) {
 
@@ -86,11 +81,14 @@ document.addEventListener(
         }
 
 
-        /* Load database */
         await loadAllData();
 
+        /*
+           Give existing students a Club ID if
+           they were created before club_id existed.
+        */
+        await assignMissingClubIds();
 
-        /* Render everything */
         renderStudents();
 
         renderAttendance();
@@ -104,16 +102,12 @@ document.addEventListener(
 
 
 /* =====================================================
-   LOAD ALL DATA FROM SUPABASE
+   LOAD ALL DATA
 ===================================================== */
 
 async function loadAllData() {
 
     try {
-
-        /* ---------------------------------------------
-           LOAD STUDENTS
-        --------------------------------------------- */
 
         const {
             data: studentRows,
@@ -155,10 +149,6 @@ async function loadAllData() {
         }
 
 
-        /* ---------------------------------------------
-           LOAD ATTENDANCE
-        --------------------------------------------- */
-
         const {
             data: attendanceRows,
             error: attendanceError
@@ -197,6 +187,7 @@ async function loadAllData() {
 
         }
 
+
     } catch (error) {
 
         console.error(
@@ -232,6 +223,9 @@ function mapStudentFromDB(row) {
         id:
             row.id,
 
+        club_id:
+            row.club_id || "",
+
         name:
             row.name || "",
 
@@ -250,13 +244,6 @@ function mapStudentFromDB(row) {
         department:
             row.department || "",
 
-        /*
-           Your current database appears to use
-           "coure" as the column name.
-
-           This also supports "course" if you
-           later rename the database column.
-        */
         course:
             row.coure ||
             row.course ||
@@ -269,6 +256,124 @@ function mapStudentFromDB(row) {
             row.joining_date || ""
 
     };
+
+}
+
+
+/* =====================================================
+   GENERATE CLUB ID
+===================================================== */
+
+/*
+   The Club ID uses the permanent Supabase student ID.
+
+   Example:
+
+   Supabase ID 1
+   KIT-SOCIALGREEN-000001
+
+   Supabase ID 2
+   KIT-SOCIALGREEN-000002
+
+   This means deleting a student will not reuse
+   that student's Club ID.
+*/
+
+function generateClubId(databaseId) {
+
+    return (
+        "KIT-SOCIALGREEN-" +
+        String(databaseId).padStart(6, "0")
+    );
+
+}
+
+
+/* =====================================================
+   ASSIGN CLUB IDS TO OLD STUDENTS
+===================================================== */
+
+async function assignMissingClubIds() {
+
+    const studentsWithoutId =
+        students.filter(
+            function (student) {
+
+                return !student.club_id;
+
+            }
+        );
+
+
+    if (!studentsWithoutId.length) {
+
+        return;
+
+    }
+
+
+    for (
+        const student
+        of studentsWithoutId
+    ) {
+
+        const newClubId =
+            generateClubId(
+                student.id
+            );
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("students")
+                .update({
+                    club_id:
+                        newClubId
+                })
+                .eq(
+                    "id",
+                    student.id
+                )
+                .select()
+                .single();
+
+
+        if (error) {
+
+            console.error(
+                "Could not assign Club ID:",
+                error
+            );
+
+            continue;
+
+        }
+
+
+        const index =
+            students.findIndex(
+                function (item) {
+
+                    return (
+                        String(item.id) ===
+                        String(student.id)
+                    );
+
+                }
+            );
+
+
+        if (index !== -1) {
+
+            students[index] =
+                mapStudentFromDB(data);
+
+        }
+
+    }
 
 }
 
@@ -290,7 +395,9 @@ function mapAttendanceFromDB(rows) {
 
 
             if (!date) {
+
                 return;
+
             }
 
 
@@ -324,10 +431,8 @@ function getToday() {
     const date =
         new Date();
 
-
     const year =
         date.getFullYear();
-
 
     const month =
         String(
@@ -337,7 +442,6 @@ function getToday() {
             "0"
         );
 
-
     const day =
         String(
             date.getDate()
@@ -345,7 +449,6 @@ function getToday() {
             2,
             "0"
         );
-
 
     return (
         year +
@@ -357,10 +460,6 @@ function getToday() {
 
 }
 
-
-/* =====================================================
-   FORMAT DATE
-===================================================== */
 
 function formatDate(dateString) {
 
@@ -400,10 +499,6 @@ function formatDate(dateString) {
 }
 
 
-/* =====================================================
-   CURRENT DATE
-===================================================== */
-
 function updateCurrentDate() {
 
     const element =
@@ -433,8 +528,6 @@ function showSection(
     button = null
 ) {
 
-    /* Hide all sections */
-
     document
         .querySelectorAll(
             ".section"
@@ -450,8 +543,6 @@ function showSection(
         );
 
 
-    /* Show selected section */
-
     const selectedSection =
         document.getElementById(
             sectionId
@@ -466,8 +557,6 @@ function showSection(
 
     }
 
-
-    /* Page titles */
 
     const titles = {
 
@@ -500,8 +589,6 @@ function showSection(
 
     }
 
-
-    /* Navigation active */
 
     document
         .querySelectorAll(
@@ -603,10 +690,6 @@ function openStudentModal() {
 }
 
 
-/* =====================================================
-   CLOSE STUDENT MODAL
-===================================================== */
-
 function closeStudentModal() {
 
     const modal =
@@ -647,8 +730,6 @@ async function saveStudent(event) {
             : "";
 
 
-    /* Helper to get form values */
-
     function getValue(id) {
 
         const element =
@@ -662,53 +743,42 @@ async function saveStudent(event) {
     }
 
 
+    /* ALL FORM FIELDS OPTIONAL */
+
     const name =
         getValue(
             "studentName"
         );
-
 
     const roll =
         getValue(
             "rollNo"
         );
 
-
     const mobile =
         getValue(
             "mobileNo"
         );
-
-
-    const branch =
-        getValue(
-            "branch"
-        );
-
 
     const section =
         getValue(
             "section"
         );
 
-
     const department =
         getValue(
             "department"
         );
-
 
     const course =
         getValue(
             "course"
         );
 
-
     const year =
         getValue(
             "year"
         );
-
 
     const joiningDate =
         getValue(
@@ -716,29 +786,7 @@ async function saveStudent(event) {
         );
 
 
-    /* Validation */
-
-    if (!name) {
-
-        alert(
-            "Please enter student name."
-        );
-
-        return;
-
-    }
-
-
-    if (!roll) {
-
-        alert(
-            "Please enter roll number."
-        );
-
-        return;
-
-    }
-
+    /* MOBILE VALIDATION */
 
     if (
         mobile &&
@@ -756,62 +804,114 @@ async function saveStudent(event) {
     }
 
 
-    /* Duplicate roll number */
+    /* DUPLICATE ROLL NUMBER */
 
-    const duplicate =
-        students.some(
-            function (student) {
+    if (roll) {
 
-                return (
+        const duplicate =
+            students.some(
+                function (student) {
 
-                    String(
-                        student.roll || ""
-                    ).toLowerCase()
-                    ===
-                    roll.toLowerCase()
+                    return (
 
-                    &&
+                        String(
+                            student.roll || ""
+                        ).toLowerCase()
 
-                    String(
-                        student.id
-                    )
-                    !==
-                    String(
-                        editingId
-                    )
+                        ===
 
-                );
+                        roll.toLowerCase()
 
-            }
-        );
+                        &&
+
+                        String(
+                            student.id
+                        )
+
+                        !==
+
+                        String(
+                            editingId
+                        )
+
+                    );
+
+                }
+            );
 
 
-    if (duplicate) {
+        if (duplicate) {
 
-        alert(
-            "This roll number already exists."
-        );
+            alert(
+                "This roll number already exists."
+            );
 
-        return;
+            return;
+
+        }
 
     }
 
 
-    /* Database object */
+    /* FIND EXISTING STUDENT */
+
+    let existingStudent = null;
+
+
+    if (editingId) {
+
+        existingStudent =
+            students.find(
+                function (student) {
+
+                    return (
+                        String(
+                            student.id
+                        )
+                        ===
+                        String(
+                            editingId
+                        )
+                    );
+
+                }
+            );
+
+    }
+
+
+    /*
+       EDITING:
+       Keep existing Club ID.
+
+       NEW STUDENT:
+       Club ID will be generated AFTER
+       Supabase creates the student.
+    */
 
     const dbStudent = {
 
         name:
-            name,
+            name || null,
 
         roll_no:
-            roll,
+            roll || null,
 
         mobile_no:
             mobile || null,
 
+        /*
+           Branch is not in the form.
+           Preserve old branch during edit.
+        */
+
         branch:
-            branch || null,
+            existingStudent
+                ? (
+                    existingStudent.branch ||
+                    null
+                )
+                : null,
 
         section:
             section || null,
@@ -819,11 +919,6 @@ async function saveStudent(event) {
         department:
             department || null,
 
-        /*
-           IMPORTANT:
-           Your current Supabase database uses
-           "coure".
-        */
         coure:
             course || null,
 
@@ -834,6 +929,17 @@ async function saveStudent(event) {
             joiningDate || null
 
     };
+
+
+    if (existingStudent) {
+
+        dbStudent.club_id =
+            existingStudent.club_id ||
+            generateClubId(
+                existingStudent.id
+            );
+
+    }
 
 
     const submitButton =
@@ -857,9 +963,9 @@ async function saveStudent(event) {
 
     try {
 
-        /* ---------------------------------------------
+        /* =========================================
            EDIT STUDENT
-        --------------------------------------------- */
+        ========================================= */
 
         if (editingId) {
 
@@ -916,9 +1022,10 @@ async function saveStudent(event) {
 
         }
 
-        /* ---------------------------------------------
+
+        /* =========================================
            ADD STUDENT
-        --------------------------------------------- */
+        ========================================= */
 
         else {
 
@@ -935,36 +1042,94 @@ async function saveStudent(event) {
             }
 
 
+            /*
+               First insert student.
+               Supabase creates permanent ID.
+            */
+
             const {
-                data,
-                error
+                data: newStudent,
+                error: insertError
             } =
                 await supabaseClient
                     .from("students")
-                    .insert(
-                        [dbStudent]
+                    .insert([
+                        dbStudent
+                    ])
+                    .select()
+                    .single();
+
+
+            if (insertError) {
+
+                throw insertError;
+
+            }
+
+
+            /*
+               Generate Club ID from the
+               permanent Supabase ID.
+            */
+
+            const clubId =
+                generateClubId(
+                    newStudent.id
+                );
+
+
+            /*
+               Save Club ID in Supabase.
+            */
+
+            const {
+                data: finalStudent,
+                error: clubIdError
+            } =
+                await supabaseClient
+                    .from("students")
+                    .update({
+                        club_id:
+                            clubId
+                    })
+                    .eq(
+                        "id",
+                        newStudent.id
                     )
                     .select()
                     .single();
 
 
-            if (error) {
+            if (clubIdError) {
 
-                throw error;
+                throw clubIdError;
 
             }
 
 
             students.push(
                 mapStudentFromDB(
-                    data
+                    finalStudent
                 )
+            );
+
+
+            /*
+               Show generated ID to user.
+            */
+
+            alert(
+                "Student added successfully.\n\n" +
+                "Student ID:\n" +
+                clubId
             );
 
         }
 
 
-        /* Refresh */
+        /* =========================================
+           REFRESH
+        ========================================= */
 
         resetStudentForm();
 
@@ -979,11 +1144,18 @@ async function saveStudent(event) {
         renderReports();
 
 
-        alert(
-            editingId
-                ? "Student updated successfully."
-                : "Student added successfully."
-        );
+        /*
+           For editing only.
+           New student already showed its ID above.
+        */
+
+        if (editingId) {
+
+            alert(
+                "Student updated successfully."
+            );
+
+        }
 
 
     } catch (error) {
@@ -1001,7 +1173,6 @@ async function saveStudent(event) {
                 "Unknown error"
             )
         );
-
 
     } finally {
 
@@ -1077,54 +1248,45 @@ function editStudent(id) {
         student.id
     );
 
-
     setValue(
         "studentName",
         student.name
     );
-
 
     setValue(
         "rollNo",
         student.roll
     );
 
-
     setValue(
         "mobileNo",
         student.mobile
     );
 
-
-    setValue(
-        "branch",
-        student.branch
-    );
-
+    /*
+       Branch is intentionally not placed
+       into the form because it was removed.
+    */
 
     setValue(
         "section",
         student.section
     );
 
-
     setValue(
         "department",
         student.department
     );
-
 
     setValue(
         "course",
         student.course
     );
 
-
     setValue(
         "year",
         student.year
     );
-
 
     setValue(
         "joiningDate",
@@ -1264,12 +1426,10 @@ function renderStudents() {
             "searchInput"
         );
 
-
     const branchFilter =
         document.getElementById(
             "branchFilter"
         );
-
 
     const yearFilter =
         document.getElementById(
@@ -1284,12 +1444,10 @@ function renderStudents() {
                 .toLowerCase()
             : "";
 
-
     const branch =
         branchFilter
             ? branchFilter.value
             : "";
-
 
     const year =
         yearFilter
@@ -1302,6 +1460,8 @@ function renderStudents() {
             function (student) {
 
                 const searchable = [
+
+                    student.club_id,
 
                     student.name,
 
@@ -1359,21 +1519,16 @@ function renderStudents() {
         );
 
 
-    /* Count */
-
     setText(
         "studentCount",
         filtered.length
     );
-
 
     setText(
         "limitCount",
         `${students.length}/100`
     );
 
-
-    /* Empty */
 
     if (!filtered.length) {
 
@@ -1410,8 +1565,6 @@ function renderStudents() {
     }
 
 
-    /* Student cards */
-
     list.innerHTML =
         filtered.map(
             function (student) {
@@ -1436,7 +1589,6 @@ function renderStudents() {
 
                 let statusText =
                     "Not Marked";
-
 
                 let statusClass =
                     "status-pending";
@@ -1490,17 +1642,29 @@ function renderStudents() {
                                 <h3>
 
                                     ${escapeHTML(
-                                        student.name
+                                        student.name ||
+                                        "Unnamed Student"
                                     )}
 
                                 </h3>
 
+                                <p>
+
+                                    <strong>
+                                        ${escapeHTML(
+                                            student.club_id ||
+                                            "-"
+                                        )}
+                                    </strong>
+
+                                </p>
 
                                 <p>
 
                                     Roll:
                                     ${escapeHTML(
-                                        student.roll || "-"
+                                        student.roll ||
+                                        "-"
                                     )}
 
                                 </p>
@@ -1527,7 +1691,8 @@ function renderStudents() {
 
                                 <span>
                                     ${escapeHTML(
-                                        student.branch || "-"
+                                        student.branch ||
+                                        "-"
                                     )}
                                 </span>
 
@@ -1542,7 +1707,8 @@ function renderStudents() {
 
                                 <span>
                                     ${escapeHTML(
-                                        student.section || "-"
+                                        student.section ||
+                                        "-"
                                     )}
                                 </span>
 
@@ -1557,7 +1723,8 @@ function renderStudents() {
 
                                 <span>
                                     ${escapeHTML(
-                                        student.department || "-"
+                                        student.department ||
+                                        "-"
                                     )}
                                 </span>
 
@@ -1572,7 +1739,8 @@ function renderStudents() {
 
                                 <span>
                                     ${escapeHTML(
-                                        student.course || "-"
+                                        student.course ||
+                                        "-"
                                     )}
                                 </span>
 
@@ -1587,7 +1755,8 @@ function renderStudents() {
 
                                 <span>
                                     ${escapeHTML(
-                                        student.year || "-"
+                                        student.year ||
+                                        "-"
                                     )}
                                 </span>
 
@@ -1602,7 +1771,8 @@ function renderStudents() {
 
                                 <span>
                                     ${escapeHTML(
-                                        student.mobile || "-"
+                                        student.mobile ||
+                                        "-"
                                     )}
                                 </span>
 
@@ -1722,7 +1892,7 @@ async function removeStudent(id) {
 
     const confirmed =
         confirm(
-            `Remove ${student.name} from the club?`
+            `Remove ${student.name || "this student"} from the club?`
         );
 
 
@@ -1734,8 +1904,6 @@ async function removeStudent(id) {
 
 
     try {
-
-        /* Delete attendance first */
 
         const {
             error:
@@ -1759,8 +1927,6 @@ async function removeStudent(id) {
         }
 
 
-        /* Delete student */
-
         const {
             error:
                 studentDeleteError
@@ -1782,8 +1948,6 @@ async function removeStudent(id) {
 
         }
 
-
-        /* Update local data */
 
         students =
             students.filter(
@@ -1900,7 +2064,7 @@ function changeAttendanceDate() {
 
 
 /* =====================================================
-   GET FILTERED ATTENDANCE STUDENTS
+   FILTER ATTENDANCE
 ===================================================== */
 
 function getFilteredAttendanceStudents() {
@@ -1910,36 +2074,30 @@ function getFilteredAttendanceStudents() {
             "attendanceSearch"
         );
 
-
     const branchElement =
         document.getElementById(
             "attendanceBranch"
         );
-
 
     const sectionElement =
         document.getElementById(
             "attendanceSection"
         );
 
-
     const departmentElement =
         document.getElementById(
             "attendanceDepartment"
         );
-
 
     const courseElement =
         document.getElementById(
             "attendanceCourse"
         );
 
-
     const yearElement =
         document.getElementById(
             "attendanceYear"
         );
-
 
     const statusElement =
         document.getElementById(
@@ -1954,36 +2112,30 @@ function getFilteredAttendanceStudents() {
                 .toLowerCase()
             : "";
 
-
     const branch =
         branchElement
             ? branchElement.value
             : "";
-
 
     const section =
         sectionElement
             ? sectionElement.value
             : "";
 
-
     const department =
         departmentElement
             ? departmentElement.value
             : "";
-
 
     const course =
         courseElement
             ? courseElement.value
             : "";
 
-
     const year =
         yearElement
             ? yearElement.value
             : "";
-
 
     const status =
         statusElement
@@ -2001,6 +2153,8 @@ function getFilteredAttendanceStudents() {
         function (student) {
 
             const searchable = [
+
+                student.club_id,
 
                 student.name,
 
@@ -2083,15 +2237,14 @@ function getFilteredAttendanceStudents() {
                 String(year);
 
 
-            let matchesStatus =
-                true;
+            let matchesStatus = true;
 
 
             if (status) {
 
                 if (
                     status ===
-                    "pending"
+                    "not-marked"
                 ) {
 
                     matchesStatus =
@@ -2133,7 +2286,7 @@ function getFilteredAttendanceStudents() {
 
 
 /* =====================================================
-   MARK ONE STUDENT ATTENDANCE
+   MARK ONE ATTENDANCE
 ===================================================== */
 
 async function markAttendance(
@@ -2160,8 +2313,6 @@ async function markAttendance(
 
 
     try {
-
-        /* Find existing attendance */
 
         const {
             data: existingRows,
@@ -2194,10 +2345,6 @@ async function markAttendance(
         }
 
 
-        /* ---------------------------------------------
-           UPDATE EXISTING
-        --------------------------------------------- */
-
         if (
             existingRows &&
             existingRows.length > 0
@@ -2226,9 +2373,6 @@ async function markAttendance(
 
         }
 
-        /* ---------------------------------------------
-           INSERT NEW
-        --------------------------------------------- */
 
         else {
 
@@ -2260,8 +2404,6 @@ async function markAttendance(
         }
 
 
-        /* Update local data */
-
         if (
             !attendance[
                 selectedDate
@@ -2283,8 +2425,6 @@ async function markAttendance(
             status;
 
 
-        /* Refresh */
-
         renderAttendance();
 
         updateDashboard();
@@ -2292,11 +2432,6 @@ async function markAttendance(
         renderStudents();
 
         renderReports();
-
-
-        console.log(
-            `Attendance saved: Student ${studentId} → ${status}`
-        );
 
 
     } catch (error) {
@@ -2321,7 +2456,7 @@ async function markAttendance(
 
 
 /* =====================================================
-   MARK ALL STUDENTS
+   MARK ALL
 ===================================================== */
 
 async function markAll(status) {
@@ -2370,10 +2505,6 @@ async function markAll(status) {
 
     try {
 
-        /* ---------------------------------------------
-           GET EXISTING ROWS FOR THIS DATE
-        --------------------------------------------- */
-
         const {
             data: existingRows,
             error: existingError
@@ -2404,24 +2535,10 @@ async function markAll(status) {
         ).forEach(
             function (row) {
 
-                const key =
-                    String(
-                        row.student_id
-                    );
-
-
-                /*
-                   Keep the first row if duplicate
-                   records somehow exist.
-                */
-                if (
-                    !existingMap[key]
-                ) {
-
-                    existingMap[key] =
-                        row.id;
-
-                }
+                existingMap[
+                    String(row.student_id)
+                ] =
+                    row.id;
 
             }
         );
@@ -2431,10 +2548,6 @@ async function markAll(status) {
 
         const rowsToUpdate = [];
 
-
-        /* ---------------------------------------------
-           PREPARE DATABASE CHANGES
-        --------------------------------------------- */
 
         students.forEach(
             function (student) {
@@ -2459,7 +2572,9 @@ async function markAll(status) {
 
                     });
 
-                } else {
+                }
+
+                else {
 
                     rowsToInsert.push({
 
@@ -2481,10 +2596,6 @@ async function markAll(status) {
             }
         );
 
-
-        /* ---------------------------------------------
-           UPDATE EXISTING ROWS
-        --------------------------------------------- */
 
         for (
             const row
@@ -2515,10 +2626,6 @@ async function markAll(status) {
         }
 
 
-        /* ---------------------------------------------
-           INSERT NEW ROWS
-        --------------------------------------------- */
-
         if (
             rowsToInsert.length
         ) {
@@ -2541,10 +2648,6 @@ async function markAll(status) {
 
         }
 
-
-        /* ---------------------------------------------
-           UPDATE LOCAL DATA
-        --------------------------------------------- */
 
         if (
             !attendance[
@@ -2574,8 +2677,6 @@ async function markAll(status) {
             }
         );
 
-
-        /* Refresh */
 
         renderAttendance();
 
@@ -2648,8 +2749,6 @@ function renderAttendance() {
     let pending = 0;
 
 
-    /* Count */
-
     studentsToShow.forEach(
         function (student) {
 
@@ -2694,26 +2793,21 @@ function renderAttendance() {
         studentsToShow.length
     );
 
-
     setText(
         "attendancePresent",
         present
     );
-
 
     setText(
         "attendanceAbsent",
         absent
     );
 
-
     setText(
         "attendancePending",
         pending
     );
 
-
-    /* Empty */
 
     if (!studentsToShow.length) {
 
@@ -2741,8 +2835,6 @@ function renderAttendance() {
 
     }
 
-
-    /* Attendance rows */
 
     list.innerHTML =
         studentsToShow.map(
@@ -2774,16 +2866,24 @@ function renderAttendance() {
                             <strong>
 
                                 ${escapeHTML(
-                                    student.name
+                                    student.name ||
+                                    "Unnamed Student"
                                 )}
 
                             </strong>
 
-
                             <small>
 
                                 ${escapeHTML(
-                                    student.branch || "-"
+                                    student.club_id ||
+                                    "-"
+                                )}
+
+                                •
+
+                                ${escapeHTML(
+                                    student.branch ||
+                                    "-"
                                 )}
 
                                 ${
@@ -2796,8 +2896,10 @@ function renderAttendance() {
                                 }
 
                                 • Roll
+
                                 ${escapeHTML(
-                                    student.roll || "-"
+                                    student.roll ||
+                                    "-"
                                 )}
 
                             </small>
@@ -3054,18 +3156,15 @@ function updateDashboard() {
         students.length
     );
 
-
     setText(
         "presentToday",
         present
     );
 
-
     setText(
         "absentToday",
         absent
     );
-
 
     setText(
         "notMarked",
@@ -3344,7 +3443,8 @@ function openProfile(id) {
                 <h2>
 
                     ${escapeHTML(
-                        student.name
+                        student.name ||
+                        "Unnamed Student"
                     )}
 
                 </h2>
@@ -3352,9 +3452,24 @@ function openProfile(id) {
 
                 <p>
 
+                    <strong>
+                        Club ID:
+                    </strong>
+
+                    ${escapeHTML(
+                        student.club_id ||
+                        "-"
+                    )}
+
+                </p>
+
+
+                <p>
+
                     Roll:
                     ${escapeHTML(
-                        student.roll || "-"
+                        student.roll ||
+                        "-"
                     )}
 
                 </p>
@@ -3417,7 +3532,8 @@ function openProfile(id) {
 
                 <span>
                     ${escapeHTML(
-                        student.mobile || "-"
+                        student.mobile ||
+                        "-"
                     )}
                 </span>
 
@@ -3432,7 +3548,8 @@ function openProfile(id) {
 
                 <span>
                     ${escapeHTML(
-                        student.branch || "-"
+                        student.branch ||
+                        "-"
                     )}
                 </span>
 
@@ -3447,7 +3564,8 @@ function openProfile(id) {
 
                 <span>
                     ${escapeHTML(
-                        student.section || "-"
+                        student.section ||
+                        "-"
                     )}
                 </span>
 
@@ -3462,7 +3580,8 @@ function openProfile(id) {
 
                 <span>
                     ${escapeHTML(
-                        student.department || "-"
+                        student.department ||
+                        "-"
                     )}
                 </span>
 
@@ -3477,7 +3596,8 @@ function openProfile(id) {
 
                 <span>
                     ${escapeHTML(
-                        student.course || "-"
+                        student.course ||
+                        "-"
                     )}
                 </span>
 
@@ -3492,7 +3612,8 @@ function openProfile(id) {
 
                 <span>
                     ${escapeHTML(
-                        student.year || "-"
+                        student.year ||
+                        "-"
                     )}
                 </span>
 
@@ -3545,10 +3666,6 @@ function openProfile(id) {
 
 }
 
-
-/* =====================================================
-   CLOSE PROFILE
-===================================================== */
 
 function closeProfile() {
 
@@ -3632,12 +3749,10 @@ function renderReports() {
         total
     );
 
-
     setText(
         "reportPresent",
         totalPresent
     );
-
 
     setText(
         "reportAbsent",
@@ -3704,7 +3819,8 @@ function renderReports() {
                             <strong>
 
                                 ${escapeHTML(
-                                    student.name
+                                    student.name ||
+                                    "Unnamed Student"
                                 )}
 
                             </strong>
@@ -3712,9 +3828,16 @@ function renderReports() {
 
                             <small>
 
-                                Roll:
                                 ${escapeHTML(
-                                    student.roll || "-"
+                                    student.club_id ||
+                                    "-"
+                                )}
+
+                                • Roll:
+
+                                ${escapeHTML(
+                                    student.roll ||
+                                    "-"
                                 )}
 
                             </small>
@@ -3799,6 +3922,8 @@ function downloadAttendance() {
 
     rows.push([
 
+        "Student ID",
+
         "Name",
 
         "Roll No",
@@ -3837,23 +3962,25 @@ function downloadAttendance() {
 
             rows.push([
 
-                student.name,
+                student.club_id || "",
 
-                student.roll,
+                student.name || "",
 
-                student.mobile,
+                student.roll || "",
 
-                student.branch,
+                student.mobile || "",
 
-                student.section,
+                student.branch || "",
 
-                student.department,
+                student.section || "",
 
-                student.course,
+                student.department || "",
 
-                student.year,
+                student.course || "",
 
-                student.joiningDate,
+                student.year || "",
+
+                student.joiningDate || "",
 
                 date,
 
@@ -3926,7 +4053,6 @@ function downloadAttendance() {
 
     link.click();
 
-
     link.remove();
 
 
@@ -3973,7 +4099,7 @@ function csvValue(value) {
 
 
 /* =====================================================
-   HELPERS
+   GET INITIALS
 ===================================================== */
 
 function getInitials(name) {
@@ -4129,8 +4255,6 @@ document.addEventListener(
                 : "";
 
 
-        /* Student filters */
-
         if (
             id === "branchFilter" ||
             id === "yearFilter"
@@ -4140,8 +4264,6 @@ document.addEventListener(
 
         }
 
-
-        /* Attendance filters */
 
         if (
 
@@ -4170,8 +4292,6 @@ document.addEventListener(
         }
 
 
-        /* Attendance date */
-
         if (
             id ===
             "attendanceDateInput"
@@ -4186,7 +4306,7 @@ document.addEventListener(
 
 
 /* =====================================================
-   CLOSE MODALS BY CLICKING OUTSIDE
+   CLOSE MODALS OUTSIDE CLICK
 ===================================================== */
 
 document.addEventListener(
@@ -4249,15 +4369,43 @@ document.addEventListener(
 );
 
 
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker
-            .register("./service-worker.js")
-            .then(() => {
-                console.log("Service Worker registered successfully");
-            })
-            .catch(error => {
-                console.error("Service Worker registration failed:", error);
-            });
-    });
-}
+/* =====================================================
+   SERVICE WORKER
+===================================================== */
+
+if (
+    "serviceWorker" in navigator
+)  {
+
+  /*  window.addEventListener(
+        "load",
+        function () {
+
+            navigator.serviceWorker
+                .register(
+                    "./service-worker.js"
+                )
+                .then(
+                    function () {
+
+                        console.log(
+                            "Service Worker registered successfully"
+                        );
+
+                    }
+                )
+                .catch(
+                    function (error) {
+
+                        console.error(
+                            "Service Worker registration failed:",
+                            error
+                        );
+
+                    }
+                );
+
+        }
+    );  */
+
+}  
