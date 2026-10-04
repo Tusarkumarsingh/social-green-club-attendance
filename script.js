@@ -2936,13 +2936,15 @@ function renderAttendance() {
    RESET ATTENDANCE FILTERS
 ===================================================== */
 
+/* =====================================================
+   RESET ATTENDANCE FILTERS
+===================================================== */
+
 function resetAttendanceFilters() {
 
-    [
+    const filterIds = [
 
         "attendanceSearch",
-
-        "attendanceBranch",
 
         "attendanceSection",
 
@@ -2954,19 +2956,19 @@ function resetAttendanceFilters() {
 
         "attendanceStatus"
 
-    ].forEach(
+    ];
+
+
+    filterIds.forEach(
         function (id) {
 
             const element =
-                document.getElementById(
-                    id
-                );
+                document.getElementById(id);
 
 
             if (element) {
 
-                element.value =
-                    "";
+                element.value = "";
 
             }
 
@@ -2977,7 +2979,6 @@ function resetAttendanceFilters() {
     renderAttendance();
 
 }
-
 
 /* =====================================================
    ATTENDANCE STATISTICS
