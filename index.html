@@ -403,7 +403,7 @@
 
                     <span id="limitCount">
                         0
-                    </span>/100 members
+                    </span>/500 members
 
                 </span>
 
@@ -487,132 +487,135 @@
 
             <!-- FILTERS -->
 
-            <div class="advanced-filters">
+           <!-- FILTERS -->
+<div class="advanced-filters">
 
-                <div class="search-box">
+    <!-- SEARCH -->
+    <div class="search-box">
 
-                    🔍
+        🔍
 
-                    <input
-                        id="attendanceSearch"
-                        type="text"
-                        placeholder="Search student..."
-                        oninput="renderAttendance()">
+        <input
+            id="attendanceSearch"
+            type="text"
+            placeholder="Search student..."
+            oninput="renderAttendance()">
 
-                </div>
-
-
-                <select id="attendanceBranch"
-                    onchange="renderAttendance()">
-
-                    <option value="">
-                        Branch
-                    </option>
-
-                    <option>CSE</option>
-                    <option>AI & ML</option>
-                    <option>ECE</option>
-                    <option>EE</option>
-                    <option>ME</option>
-                    <option>CE</option>
-                   
-
-                </select>
+    </div>
 
 
-                <select id="attendanceSection"
-                    onchange="renderAttendance()">
+    <!-- SECTION -->
+    <select
+        id="attendanceSection"
+        onchange="renderAttendance()">
 
-                    <option value="">
-                        Section
-                    </option>
+        <option value="">
+            Section
+        </option>
 
-                    <option>A</option>
-                    <option>B</option>
-                    <option>C</option>
-                    <option>D</option>
-                  
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+        <option>D</option>
+        <option>e</option>
+        <option>none</option>
 
-
-                </select>
-
-
-                <select id="attendanceDepartment"
-                    onchange="renderAttendance()">
-
-                    <option value="">
-                        Department
-                    </option>
-
-                    <option>Computer Science</option>
-                    <option>Electronics</option>
-                    <option>Mechanical</option>
-                    <option>Civil</option>
-                    <option>Electrical</option>
-
-                </select>
+    </select>
 
 
-                <select id="attendanceCourse"
-                    onchange="renderAttendance()">
+    <!-- DEPARTMENT -->
+    <select
+        id="attendanceDepartment"
+        onchange="renderAttendance()">
 
-                    <option value="">
-                        Course
-                    </option>
+        <option value="">
+            Department
+        </option>
 
-                    <option>B.Tech</option>
-                    <option>BCA</option>
-                    <option>MCA</option>
-                    <option>Diploma</option>
+        <option>Computer Science</option>
+        <option>Electronics</option>
+        <option>Mechanical</option>
+        <option>Civil</option>
+        <option>Electrical</option>
+        <option>Biotech</option>
+        <option>Other</option>
 
-                </select>
-
-
-                <select id="attendanceYear"
-                    onchange="renderAttendance()">
-
-                    <option value="">
-                        Year
-                    </option>
-
-                    <option>1st Year</option>
-                    <option>2nd Year</option>
-                    <option>3rd Year</option>
-                    <option>4th Year</option>
-
-                </select>
+    </select>
 
 
-                <select id="attendanceStatus"
-                    onchange="renderAttendance()">
+    <!-- COURSE -->
+    <select
+        id="attendanceCourse"
+        onchange="renderAttendance()">
 
-                    <option value="">
-                        All Status
-                    </option>
+        <option value="">
+            Course
+        </option>
 
-                    <option value="present">
-                        Present
-                    </option>
+        <option>B.Tech</option>
+        <option>MBA</option>
+        <option>MCA</option>
+        <option>Diploma</option>
+        <option>BBA</option>
+        <option>BCA</option>
+        <option>Polytechnic</option>
+        <option>Pharma</option>
 
-                    <option value="absent">
-                        Absent
-                    </option>
-
-                    <option value="not-marked">
-                        Not Marked
-                    </option>
-
-                </select>
+    </select>
 
 
-                <button class="reset-btn"
-                    onclick="resetAttendanceFilters()">
+    <!-- YEAR -->
+    <select
+        id="attendanceYear"
+        onchange="renderAttendance()">
 
-                    Reset
+        <option value="">
+            Year
+        </option>
 
-                </button>
+        <option>1st Year</option>
+        <option>2nd Year</option>
+        <option>3rd Year</option>
+        <option>4th Year</option>
 
-            </div>
+    </select>
+
+
+    <!-- ATTENDANCE STATUS -->
+    <select
+        id="attendanceStatus"
+        onchange="renderAttendance()">
+
+        <option value="">
+            All Status
+        </option>
+
+        <option value="present">
+            Present
+        </option>
+
+        <option value="absent">
+            Absent
+        </option>
+
+        <option value="not-marked">
+            Not Marked
+        </option>
+
+    </select>
+
+
+    <!-- RESET -->
+    <button
+        type="button"
+        class="reset-btn"
+        onclick="resetAttendanceFilters()">
+
+        Reset
+
+    </button>
+
+</div>
 
 
             <!-- ATTENDANCE SUMMARY -->

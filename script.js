@@ -661,11 +661,11 @@ function openStudentModal() {
 
     if (
         !editingId &&
-        students.length >= 100
+        students.length >= 500
     ) {
 
         alert(
-            "Maximum 100 students allowed."
+            "Maximum 500 students allowed."
         );
 
         return;
@@ -1030,11 +1030,11 @@ async function saveStudent(event) {
         else {
 
             if (
-                students.length >= 100
+                students.length >= 500
             ) {
 
                 alert(
-                    "Maximum 100 students allowed."
+                    "Maximum 500 students allowed."
                 );
 
                 return;
@@ -1526,7 +1526,7 @@ function renderStudents() {
 
     setText(
         "limitCount",
-        `${students.length}/100`
+        `${students.length}/500`
     );
 
 
@@ -2067,43 +2067,34 @@ function changeAttendanceDate() {
    FILTER ATTENDANCE
 ===================================================== */
 
+/* =====================================================
+   FILTER ATTENDANCE STUDENTS
+===================================================== */
+
 function getFilteredAttendanceStudents() {
 
     const searchElement =
-        document.getElementById(
-            "attendanceSearch"
-        );
-
-    const branchElement =
-        document.getElementById(
-            "attendanceBranch"
-        );
+        document.getElementById("attendanceSearch");
 
     const sectionElement =
-        document.getElementById(
-            "attendanceSection"
-        );
+        document.getElementById("attendanceSection");
 
     const departmentElement =
-        document.getElementById(
-            "attendanceDepartment"
-        );
+        document.getElementById("attendanceDepartment");
 
     const courseElement =
-        document.getElementById(
-            "attendanceCourse"
-        );
+        document.getElementById("attendanceCourse");
 
     const yearElement =
-        document.getElementById(
-            "attendanceYear"
-        );
+        document.getElementById("attendanceYear");
 
     const statusElement =
-        document.getElementById(
-            "attendanceStatus"
-        );
+        document.getElementById("attendanceStatus");
 
+
+    /* =========================
+       GET FILTER VALUES
+    ========================= */
 
     const search =
         searchElement
@@ -2112,178 +2103,169 @@ function getFilteredAttendanceStudents() {
                 .toLowerCase()
             : "";
 
-    const branch =
-        branchElement
-            ? branchElement.value
-            : "";
-
     const section =
         sectionElement
             ? sectionElement.value
+                .trim()
+                .toLowerCase()
             : "";
 
     const department =
         departmentElement
             ? departmentElement.value
+                .trim()
+                .toLowerCase()
             : "";
 
     const course =
         courseElement
             ? courseElement.value
+                .trim()
+                .toLowerCase()
             : "";
 
     const year =
         yearElement
             ? yearElement.value
+                .trim()
+                .toLowerCase()
             : "";
 
     const status =
         statusElement
             ? statusElement.value
+                .trim()
+                .toLowerCase()
             : "";
 
 
+    /* =========================
+       CURRENT DATE ATTENDANCE
+    ========================= */
+
     const dayData =
-        attendance[
-            selectedDate
-        ] || {};
+        attendance[selectedDate] || {};
 
 
-    return students.filter(
-        function (student) {
+    /* =========================
+       FILTER STUDENTS
+    ========================= */
 
-            const searchable = [
+    return students.filter(function (student) {
 
-                student.club_id,
+        const searchable = [
 
-                student.name,
+            student.club_id,
+            student.name,
+            student.roll,
+            student.mobile,
+            student.branch,
+            student.section,
+            student.department,
+            student.course,
+            student.year
 
-                student.roll,
-
-                student.mobile,
-
-                student.branch,
-
-                student.section,
-
-                student.department,
-
-                student.course,
-
-                student.year
-
-            ]
-                .join(" ")
-                .toLowerCase();
+        ]
+            .join(" ")
+            .toLowerCase();
 
 
-            const currentStatus =
-                dayData[
-                    String(
-                        student.id
-                    )
-                ] || "";
+        /* SEARCH */
+
+        const matchesSearch =
+            !search ||
+            searchable.includes(search);
 
 
-            const matchesSearch =
-                !search ||
-                searchable.includes(
-                    search
-                );
+        /* SECTION */
+
+        const matchesSection =
+            !section ||
+            String(student.section || "")
+                .trim()
+                .toLowerCase() === section;
 
 
-            const matchesBranch =
-                !branch ||
-                String(
-                    student.branch || ""
-                )
-                ===
-                String(branch);
+        /* DEPARTMENT */
+
+        const matchesDepartment =
+            !department ||
+            String(student.department || "")
+                .trim()
+                .toLowerCase() === department;
 
 
-            const matchesSection =
-                !section ||
-                String(
-                    student.section || ""
-                )
-                ===
-                String(section);
+        /* COURSE */
+
+        const matchesCourse =
+            !course ||
+            String(student.course || "")
+                .trim()
+                .toLowerCase() === course;
 
 
-            const matchesDepartment =
-                !department ||
-                String(
-                    student.department || ""
-                )
-                ===
-                String(department);
+        /* YEAR */
+
+        const matchesYear =
+            !year ||
+            String(student.year || "")
+                .trim()
+                .toLowerCase() === year;
 
 
-            const matchesCourse =
-                !course ||
-                String(
-                    student.course || ""
-                )
-                ===
-                String(course);
+        /* =========================
+           ATTENDANCE STATUS
+        ========================= */
+
+        const currentStatus =
+            dayData[
+                String(student.id)
+            ] || "";
 
 
-            const matchesYear =
-                !year ||
-                String(
-                    student.year || ""
-                )
-                ===
-                String(year);
+        let matchesStatus = true;
 
 
-            let matchesStatus = true;
+        if (status) {
 
+            if (status === "not-marked") {
 
-            if (status) {
+                matchesStatus =
+                    !currentStatus;
 
-                if (
-                    status ===
-                    "not-marked"
-                ) {
+            } else {
 
-                    matchesStatus =
-                        !currentStatus;
-
-                } else {
-
-                    matchesStatus =
-                        currentStatus ===
-                        status;
-
-                }
+                matchesStatus =
+                    currentStatus === status;
 
             }
 
-
-            return (
-
-                matchesSearch &&
-
-                matchesBranch &&
-
-                matchesSection &&
-
-                matchesDepartment &&
-
-                matchesCourse &&
-
-                matchesYear &&
-
-                matchesStatus
-
-            );
-
         }
-    );
+
+
+        /* =========================
+           FINAL RESULT
+        ========================= */
+
+        return (
+
+            matchesSearch &&
+
+            matchesSection &&
+
+            matchesDepartment &&
+
+            matchesCourse &&
+
+            matchesYear &&
+
+            matchesStatus
+
+        );
+
+    });
 
 }
-
 
 /* =====================================================
    MARK ONE ATTENDANCE
